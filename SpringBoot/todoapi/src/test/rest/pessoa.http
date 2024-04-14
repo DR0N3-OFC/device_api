@@ -1,0 +1,30 @@
+@URL=http://localhost:8080/pessoa
+
+### CREATE
+POST {{URL}}
+Content-Type: application/json
+
+{
+    "nome": "Jucasauro Franciscon",
+    "email": "jucasauro1@gmail.com",
+    "senha": "123"
+}
+
+### GET ALL
+GET {{URL}}
+
+### GET BY ID
+GET {{URL}}/1
+
+
+### UPDATE
+PUT {{URL}}/1
+Content-Type: application/json
+
+{
+    "nome": "Marcelo Alberton",
+    "email": "ma@gmail.com"
+}
+
+### DELETE
+DELETE {{URL}}/1
