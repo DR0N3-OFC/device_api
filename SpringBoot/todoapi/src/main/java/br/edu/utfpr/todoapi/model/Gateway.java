@@ -1,15 +1,20 @@
 package br.edu.utfpr.todoapi.model;
 
+import java.util.List;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import lombok.Data;
 
 @Entity
 @Table(name = "tb_gateway") // Define o noma da tabel
-
+@Data
 public class Gateway {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,4 +25,7 @@ public class Gateway {
     private String descricao;
     @Column(name = "IP", nullable = false, unique = true)
     private String enderecoIP;
+
+    @OneToMany(mappedBy = "gateway", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Dispositivo> dispositivos;
 }

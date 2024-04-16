@@ -5,12 +5,14 @@ import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.stereotype.Service;
 
 import br.edu.utfpr.todoapi.dto.GatewayDTO;
+import br.edu.utfpr.todoapi.exception.NotFoundException;
 import br.edu.utfpr.todoapi.model.Gateway;
 import br.edu.utfpr.todoapi.repository.GatewayRepository;
+
+
 
 @Service
 public class GatewayService {
