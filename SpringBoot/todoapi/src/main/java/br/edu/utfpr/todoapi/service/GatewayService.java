@@ -63,4 +63,13 @@ public class GatewayService {
 
         return gatewayRepository.save(gateway);
     }
+    public void delete(long id) throws NotFoundException {
+        var res = gatewayRepository.findById(id);
+
+        if(res.isEmpty()) {
+            throw new NotFoundException("Pessoa " + id + " não existe.");
+        }
+
+        gatewayRepository.delete(res.get());
+    }
 }
