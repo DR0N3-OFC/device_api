@@ -60,6 +60,7 @@ public class GatewayService {
         var gateway = res.get();
         gateway.setNome(dto.nome());
         gateway.setDescricao(dto.descricao());
+        gateway.setEndereco(dto.endereco());
 
         return gatewayRepository.save(gateway);
     }
