@@ -67,7 +67,7 @@ public class GatewayService {
         var res = gatewayRepository.findById(id);
 
         if(res.isEmpty()) {
-            throw new NotFoundException("Pessoa " + id + " não existe.");
+            throw new NotFoundException("Gateway " + id + " não existe.");
         }
 
         gatewayRepository.delete(res.get());
