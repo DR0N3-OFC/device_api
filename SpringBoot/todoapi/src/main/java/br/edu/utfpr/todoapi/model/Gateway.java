@@ -23,8 +23,8 @@ public class Gateway {
     private String nome;
     @Column(nullable = false)
     private String descricao;
-    @Column(name = "IP", nullable = false, unique = true)
-    private String enderecoIP;
+    @Column(nullable = false, unique = true)
+    private String endereco;
 
     @OneToMany(mappedBy = "gateway", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Dispositivo> dispositivos;

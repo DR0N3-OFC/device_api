@@ -20,6 +20,9 @@ public class Medicao {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id; 
     
+    @Column(nullable = false)
+    private double valor;
+
     @Column(nullable = false, unique = true)
     private Date data;
 
