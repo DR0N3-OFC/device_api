@@ -2,6 +2,8 @@ package br.edu.utfpr.todoapi.model;
 
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -18,7 +20,7 @@ import lombok.Data;
 public class Medicao {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id; 
+    private long medicao_id; 
     
     @Column(nullable = false)
     private double valor;
@@ -27,6 +29,7 @@ public class Medicao {
     private Date data;
 
     @ManyToOne
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "sensor_id")
+    @JsonIgnore
     private Sensor sensor;
 }

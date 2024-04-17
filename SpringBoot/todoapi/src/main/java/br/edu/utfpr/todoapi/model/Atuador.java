@@ -1,5 +1,7 @@
 package br.edu.utfpr.todoapi.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -16,12 +18,13 @@ import lombok.Data;
 public class Atuador {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id; 
+    private long atuador_id; 
     
     @Column(nullable = false, unique = true)
     private String nome;
 
     @ManyToOne
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "dispositivo_id")
+    @JsonBackReference
     private Dispositivo dispositivo;
 }

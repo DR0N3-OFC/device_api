@@ -2,9 +2,12 @@ package br.edu.utfpr.todoapi.model;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -20,7 +23,7 @@ import lombok.Data;
 public class Sensor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id; 
+    private long sensor_id; 
     
     @Column(nullable = false, unique = true)
     private String nome;
@@ -29,9 +32,11 @@ public class Sensor {
     private String tipo;
 
     @ManyToOne
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "dispositivo_id")
+    @JsonIgnore
     private Dispositivo dispositivo;
 
-    @OneToMany(mappedBy = "sensor", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "sensor", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @JsonIgnore
     private List<Medicao> medicoes;
 }

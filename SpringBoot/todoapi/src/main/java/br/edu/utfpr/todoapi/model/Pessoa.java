@@ -14,7 +14,7 @@ import lombok.Data;
 public class Pessoa {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id; 
+    private long pessoa_id; 
     
     @Column(nullable = false)
     private String nome;
