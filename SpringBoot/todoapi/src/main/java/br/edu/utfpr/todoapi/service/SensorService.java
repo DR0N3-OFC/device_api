@@ -60,9 +60,11 @@ public class SensorService {
         var sensor = res.get();
         sensor.setNome(dto.nome());
         sensor.setTipo(dto.tipo());
+        sensor.setDispositivo(dto.dispositivo());
 
         return sensorRepository.save(sensor);
     }
+
     public void delete(long id) throws NotFoundException {
         var res = sensorRepository.findById(id);
 

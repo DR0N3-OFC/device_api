@@ -59,6 +59,7 @@ public class AtuadorService {
 
         var atuador = res.get();
         atuador.setNome(dto.nome());
+        atuador.setDispositivo(dto.dispositivo());
 
         return atuadorRepository.save(atuador);
     }

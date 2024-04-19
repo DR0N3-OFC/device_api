@@ -60,6 +60,7 @@ public class MedicaoService {
         var medicao = res.get();
         medicao.setValor(dto.valor());
         medicao.setData(dto.data());
+        medicao.setSensor(dto.sensor());
 
         return medicaoRepository.save(medicao);
     }

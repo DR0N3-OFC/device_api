@@ -1,6 +1,6 @@
 package br.edu.utfpr.todoapi.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -25,6 +25,6 @@ public class Atuador {
 
     @ManyToOne
     @JoinColumn(name = "dispositivo_id")
-    @JsonBackReference
+    @JsonIgnore
     private Dispositivo dispositivo;
 }

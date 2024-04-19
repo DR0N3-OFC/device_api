@@ -60,6 +60,23 @@ public class DispositivoController {
             : ResponseEntity.notFound().build();
     }
     
+    @GetMapping("/{id}/atuadores")
+    public ResponseEntity<Object> getActuatorsByDeviceId(@PathVariable("id") long id) {
+        var gate = dispositivoService.getById(id);
+        
+        return gate.isPresent()
+            ? ResponseEntity.ok().body(gate.get().getAtuadores())
+            : ResponseEntity.notFound().build();
+    }
+
+    @GetMapping("/{id}/sensores")
+    public ResponseEntity<Object> getSensorsByDeviceId(@PathVariable("id") long id) {
+        var gate = dispositivoService.getById(id);
+        
+        return gate.isPresent()
+            ? ResponseEntity.ok().body(gate.get().getSensores())
+            : ResponseEntity.notFound().build();
+    }
 
     @PutMapping("/{id}")
     public ResponseEntity<Object> update(@PathVariable long id,

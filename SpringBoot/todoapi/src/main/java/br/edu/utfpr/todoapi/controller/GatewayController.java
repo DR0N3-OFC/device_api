@@ -60,6 +60,14 @@ public class GatewayController {
             : ResponseEntity.notFound().build();
     }
     
+    @GetMapping("/{id}/dispositivos")
+    public ResponseEntity<Object> getDevicesByGatewayId(@PathVariable("id") long id) {
+        var gate = gatewayService.getById(id);
+        
+        return gate.isPresent()
+            ? ResponseEntity.ok().body(gate.get().getDispositivos())
+            : ResponseEntity.notFound().build();
+    }
 
     @PutMapping("/{id}")
     public ResponseEntity<Object> update(@PathVariable long id,

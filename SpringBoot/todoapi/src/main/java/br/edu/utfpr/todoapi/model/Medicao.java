@@ -25,7 +25,7 @@ public class Medicao {
     @Column(nullable = false)
     private double valor;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private Date data;
 
     @ManyToOne

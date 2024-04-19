@@ -60,6 +60,14 @@ public class SensorController {
             : ResponseEntity.notFound().build();
     }
     
+    @GetMapping("/{id}/medicoes")
+    public ResponseEntity<Object> getMeasurementsBySensorId(@PathVariable("id") long id) {
+        var gate = sensorService.getById(id);
+        
+        return gate.isPresent()
+            ? ResponseEntity.ok().body(gate.get().getMedicoes())
+            : ResponseEntity.notFound().build();
+    }
 
     @PutMapping("/{id}")
     public ResponseEntity<Object> update(@PathVariable long id,
