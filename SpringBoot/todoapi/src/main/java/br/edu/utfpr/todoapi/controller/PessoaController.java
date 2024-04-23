@@ -16,17 +16,31 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.edu.utfpr.todoapi.dto.PessoaDTO;
 import br.edu.utfpr.todoapi.exception.NotFoundException;
+import br.edu.utfpr.todoapi.model.Gateway;
 import br.edu.utfpr.todoapi.model.Pessoa;
 import br.edu.utfpr.todoapi.service.PessoaService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 
 @RestController
 @RequestMapping("/pessoa")
+@Tag(name = "Pessoa", description = "Endpoint para operações relacionadas a pessoas")
 public class PessoaController {
     @Autowired
     private PessoaService pessoaService;
 
     @PostMapping
+    @Operation(summary = "Criar uma nova pessoa", description = "Registra um novo objeto de pessoa com base no DTO recebido.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "201", description = "Sucesso, retorna a pessoa", content = @Content(schema = @Schema(implementation = Pessoa.class))),
+        @ApiResponse(responseCode = "404", description = "Não encontrado, nenhuma pessoa com o ID fornecido")
+    })
     public ResponseEntity<Object> create(@RequestBody PessoaDTO dto) {
         try {
             var res = pessoaService.create(dto);
@@ -45,6 +59,7 @@ public class PessoaController {
      * Obter todas as pessoas do DB.
      */
     @GetMapping
+    @Operation(summary = "Obter todas as pessoas")
     public List<Pessoa> getAll() {
         return pessoaService.getAll();
     }
@@ -53,16 +68,40 @@ public class PessoaController {
      * Obter 1 pessoa pelo ID.
      */
     @GetMapping("/{id}")
+    @Operation(summary = "Obter uma pessoa pelo ID")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Sucesso, retorna a pessoa", content = @Content(schema = @Schema(implementation = Pessoa.class))),
+        @ApiResponse(responseCode = "404", description = "Não encontrado, nenhuma pessoa com o ID fornecido")
+    })
     public ResponseEntity<Object> getById(@PathVariable("id") long id) {
-        var person = pessoaService.getById(id);
+        var pessoa = pessoaService.getById(id);
         
-        return person.isPresent()
-            ? ResponseEntity.ok().body(person.get())
+        return pessoa.isPresent()
+            ? ResponseEntity.ok().body(pessoa.get())
             : ResponseEntity.notFound().build();
     }
     
+    @GetMapping("/{id}/gateways")
+    @Operation(summary = "Obter gateways por ID da pessoa")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Sucesso, retorna os gateways da pessoa", content = @Content(array = @ArraySchema(schema = @Schema(implementation = Gateway.class)))),
+        @ApiResponse(responseCode = "404", description = "Não encontrado, nenhum gateway com o ID fornecido")
+    })
+    public ResponseEntity<Object> getMeasurementsBySensorId(@PathVariable("id") long id) {
+        var pessoa = pessoaService.getById(id);
+        
+        return pessoa.isPresent()
+            ? ResponseEntity.ok().body(pessoa.get().getGateways())
+            : ResponseEntity.notFound().build();
+    }
 
     @PutMapping("/{id}")
+    @Operation(summary = "Atualiza uma pessoa com base no seu ID.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Sucesso, retorna a pessoa atualizada", content = @Content(schema = @Schema(implementation = Pessoa.class))),
+        @ApiResponse(responseCode = "404", description = "Não encontrado, nenhuma pessoa com o ID fornecido"),
+        @ApiResponse(responseCode = "400", description = "ERRO, ocorreu algum erro na requisição")
+    })
     public ResponseEntity<Object> update(@PathVariable long id,
         @RequestBody PessoaDTO dto) {
             try {
@@ -75,6 +114,12 @@ public class PessoaController {
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Deleta uma pessoa com base no seu ID.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Sucesso, pessoa deletada"),
+        @ApiResponse(responseCode = "404", description = "Não encontrado, nenhuma pessoa com o ID fornecido"),
+        @ApiResponse(responseCode = "400", description = "ERRO, ocorreu algum erro na requisição")
+    })
     public ResponseEntity<Object> delete(@PathVariable("id") long id){
         try {
             pessoaService.delete(id);

@@ -1,5 +1,6 @@
 package br.edu.utfpr.todoapi.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,6 +26,8 @@ public class PessoaService {
         var pessoa = new Pessoa();
         BeanUtils.copyProperties(dto, pessoa);
 
+        pessoa.setCreated_at(LocalDateTime.now());
+        pessoa.setUpdated_at(LocalDateTime.now());
         // Persistir no Banco de dados
         return pessoaRepository.save(pessoa);
     }
@@ -57,6 +60,7 @@ public class PessoaService {
         var pessoa = res.get();
         pessoa.setNome(dto.nome());
         pessoa.setEmail(dto.email());
+        pessoa.setUpdated_at(LocalDateTime.now());
 
         return pessoaRepository.save(pessoa);
     }

@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 import br.edu.utfpr.todoapi.model.Dispositivo;
+import br.edu.utfpr.todoapi.model.Pessoa;
 
 public record GatewayDTO(
     String nome, 
@@ -11,6 +12,7 @@ public record GatewayDTO(
     String endereco,
     Date created_at,
     Date updated_at,
+    Pessoa pessoa,
     List<Dispositivo> dispositivos) {
 
 }
