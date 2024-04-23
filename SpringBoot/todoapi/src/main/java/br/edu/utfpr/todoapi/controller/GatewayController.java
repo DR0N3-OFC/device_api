@@ -16,16 +16,30 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.edu.utfpr.todoapi.dto.GatewayDTO;
 import br.edu.utfpr.todoapi.exception.NotFoundException;
+import br.edu.utfpr.todoapi.model.Dispositivo;
 import br.edu.utfpr.todoapi.model.Gateway;
 import br.edu.utfpr.todoapi.service.GatewayService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/gateway")
+@Tag(name = "Gateway", description = "Endpoint para operações relacionadas a gateways")
 public class GatewayController {
     @Autowired
     private GatewayService gatewayService;
 
     @PostMapping
+    @Operation(summary = "Criar um novo gateway", description = "Registra um novo objeto de gateway com base no DTO recebido.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "201", description = "Sucesso, retorna o gateway", content = @Content(schema = @Schema(implementation = Gateway.class))),
+        @ApiResponse(responseCode = "404", description = "Não encontrado, nenhum gateway com o ID fornecido")
+    })
     public ResponseEntity<Object> create(@RequestBody GatewayDTO dto) {
         try {
             var res = gatewayService.create(dto);
@@ -44,6 +58,7 @@ public class GatewayController {
      * Obter todas as gateways do DB.
      */
     @GetMapping
+    @Operation(summary = "Obter todos os gateways")
     public List<Gateway> getAll() {
         return gatewayService.getAll();
     }
@@ -52,24 +67,40 @@ public class GatewayController {
      * Obter 1 gateway pelo ID.
      */
     @GetMapping("/{id}")
+    @Operation(summary = "Obter um gateway pelo ID")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Sucesso, retorna o gateway", content = @Content(schema = @Schema(implementation = Gateway.class))),
+        @ApiResponse(responseCode = "404", description = "Não encontrado, nenhum gateway com o ID fornecido")
+    })
     public ResponseEntity<Object> getById(@PathVariable("id") long id) {
-        var gate = gatewayService.getById(id);
+        var gateway = gatewayService.getById(id);
         
-        return gate.isPresent()
-            ? ResponseEntity.ok().body(gate.get())
+        return gateway.isPresent()
+            ? ResponseEntity.ok().body(gateway.get())
             : ResponseEntity.notFound().build();
     }
     
     @GetMapping("/{id}/dispositivos")
+    @Operation(summary = "Obter dispositivos por ID do gateway")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Sucesso, retorna os dispositivos do gateway", content = @Content(array = @ArraySchema(schema = @Schema(implementation = Dispositivo.class)))),
+        @ApiResponse(responseCode = "404", description = "Não encontrado, nenhum sensor com o ID fornecido")
+    })
     public ResponseEntity<Object> getDevicesByGatewayId(@PathVariable("id") long id) {
-        var gate = gatewayService.getById(id);
+        var gateway = gatewayService.getById(id);
         
-        return gate.isPresent()
-            ? ResponseEntity.ok().body(gate.get().getDispositivos())
+        return gateway.isPresent()
+            ? ResponseEntity.ok().body(gateway.get().getDispositivos())
             : ResponseEntity.notFound().build();
     }
 
     @PutMapping("/{id}")
+    @Operation(summary = "Atualiza um gateway com base no seu ID.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Sucesso, retorna o gateway atualizado", content = @Content(schema = @Schema(implementation = Gateway.class))),
+        @ApiResponse(responseCode = "404", description = "Não encontrado, nenhum gateway com o ID fornecido"),
+        @ApiResponse(responseCode = "400", description = "ERRO, ocorreu algum erro na requisição")
+    })
     public ResponseEntity<Object> update(@PathVariable long id,
         @RequestBody GatewayDTO dto) {
             try {
@@ -82,6 +113,12 @@ public class GatewayController {
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Deleta um gateway com base no seu ID.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Sucesso, gateway deletado"),
+        @ApiResponse(responseCode = "404", description = "Não encontrado, nenhum gateway com o ID fornecido"),
+        @ApiResponse(responseCode = "400", description = "ERRO, ocorreu algum erro na requisição")
+    })
     public ResponseEntity<Object> delete(@PathVariable("id") long id){
         try {
             gatewayService.delete(id);

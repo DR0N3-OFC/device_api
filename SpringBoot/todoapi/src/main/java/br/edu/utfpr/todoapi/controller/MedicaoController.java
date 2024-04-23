@@ -18,14 +18,26 @@ import br.edu.utfpr.todoapi.dto.MedicaoDTO;
 import br.edu.utfpr.todoapi.exception.NotFoundException;
 import br.edu.utfpr.todoapi.model.Medicao;
 import br.edu.utfpr.todoapi.service.MedicaoService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/medicao")
+@Tag(name = "Medicao", description = "Endpoint para operações relacionadas a medicoes")
 public class MedicaoController {
     @Autowired
     private MedicaoService medicaoService;
 
     @PostMapping
+    @Operation(summary = "Criar um novo medicao", description = "Registra um novo objeto de medicao com base no DTO recebido.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "201", description = "Sucesso, retorna o medicao", content = @Content(schema = @Schema(implementation = Medicao.class))),
+        @ApiResponse(responseCode = "404", description = "Não encontrado, nenhum medicao com o ID fornecido")
+    })
     public ResponseEntity<Object> create(@RequestBody MedicaoDTO dto) {
         try {
             var res = medicaoService.create(dto);
@@ -44,6 +56,7 @@ public class MedicaoController {
      * Obter todas as medicaos do DB.
      */
     @GetMapping
+    @Operation(summary = "Obter todos os medicoes")
     public List<Medicao> getAll() {
         return medicaoService.getAll();
     }
@@ -52,16 +65,27 @@ public class MedicaoController {
      * Obter 1 medicao pelo ID.
      */
     @GetMapping("/{id}")
+    @Operation(summary = "Obter um medicao pelo ID")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Sucesso, retorna o medicao", content = @Content(schema = @Schema(implementation = Medicao.class))),
+        @ApiResponse(responseCode = "404", description = "Não encontrado, nenhum medicao com o ID fornecido")
+    })
     public ResponseEntity<Object> getById(@PathVariable("id") long id) {
-        var gate = medicaoService.getById(id);
+        var medicao = medicaoService.getById(id);
         
-        return gate.isPresent()
-            ? ResponseEntity.ok().body(gate.get())
+        return medicao.isPresent()
+            ? ResponseEntity.ok().body(medicao.get())
             : ResponseEntity.notFound().build();
     }
     
 
     @PutMapping("/{id}")
+    @Operation(summary = "Atualiza um medicao com base no seu ID.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Sucesso, retorna o medicao atualizado", content = @Content(schema = @Schema(implementation = Medicao.class))),
+        @ApiResponse(responseCode = "404", description = "Não encontrado, nenhum medicao com o ID fornecido"),
+        @ApiResponse(responseCode = "400", description = "ERRO, ocorreu algum erro na requisição")
+    })
     public ResponseEntity<Object> update(@PathVariable long id,
         @RequestBody MedicaoDTO dto) {
             try {
@@ -74,6 +98,12 @@ public class MedicaoController {
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Deleta um medicao com base no seu ID.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Sucesso, medicao deletado"),
+        @ApiResponse(responseCode = "404", description = "Não encontrado, nenhum medicao com o ID fornecido"),
+        @ApiResponse(responseCode = "400", description = "ERRO, ocorreu algum erro na requisição")
+    })
     public ResponseEntity<Object> delete(@PathVariable("id") long id){
         try {
             medicaoService.delete(id);

@@ -1,5 +1,6 @@
 package br.edu.utfpr.todoapi.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,6 +29,8 @@ public class AtuadorService {
         var atuador = new Atuador();
         BeanUtils.copyProperties(dto, atuador);
 
+        atuador.setCreated_at(LocalDateTime.now());
+        atuador.setUpdated_at(LocalDateTime.now());
         // Persistir no Banco de dados
         return atuadorRepository.save(atuador);
     }
@@ -60,6 +63,7 @@ public class AtuadorService {
         var atuador = res.get();
         atuador.setNome(dto.nome());
         atuador.setDispositivo(dto.dispositivo());
+        atuador.setUpdated_at(LocalDateTime.now());
 
         return atuadorRepository.save(atuador);
     }

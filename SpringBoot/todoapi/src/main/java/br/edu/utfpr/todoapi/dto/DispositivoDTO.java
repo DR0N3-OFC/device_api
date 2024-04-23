@@ -1,5 +1,6 @@
 package br.edu.utfpr.todoapi.dto;
 
+import java.util.Date;
 import java.util.List;
 
 import br.edu.utfpr.todoapi.model.Atuador;
@@ -12,6 +13,8 @@ public record DispositivoDTO(
     String localizacao,
     String endereco,
     Gateway gateway,
+    Date created_at,
+    Date updated_at,
     List<Atuador> atuadores,
     List<Sensor> sensores) {
 

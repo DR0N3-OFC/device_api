@@ -1,5 +1,6 @@
 package br.edu.utfpr.todoapi.model;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -27,6 +28,12 @@ public class Medicao {
 
     @Column(nullable = false)
     private Date data;
+
+    @Column(nullable = false)
+    private LocalDateTime created_at;
+
+    @Column(nullable = false)
+    private LocalDateTime updated_at;
 
     @ManyToOne
     @JoinColumn(name = "sensor_id")

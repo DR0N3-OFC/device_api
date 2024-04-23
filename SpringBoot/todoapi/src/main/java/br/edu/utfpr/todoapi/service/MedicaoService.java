@@ -1,5 +1,6 @@
 package br.edu.utfpr.todoapi.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,6 +28,9 @@ public class MedicaoService {
     public Medicao create(MedicaoDTO dto){
         var medicao = new Medicao();
         BeanUtils.copyProperties(dto, medicao);
+
+        medicao.setCreated_at(LocalDateTime.now());
+        medicao.setUpdated_at(LocalDateTime.now());
 
         // Persistir no Banco de dados
         return medicaoRepository.save(medicao);
@@ -61,6 +65,7 @@ public class MedicaoService {
         medicao.setValor(dto.valor());
         medicao.setData(dto.data());
         medicao.setSensor(dto.sensor());
+        medicao.setUpdated_at(LocalDateTime.now());
 
         return medicaoRepository.save(medicao);
     }

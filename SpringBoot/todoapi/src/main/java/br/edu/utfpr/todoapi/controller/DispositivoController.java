@@ -16,16 +16,31 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.edu.utfpr.todoapi.dto.DispositivoDTO;
 import br.edu.utfpr.todoapi.exception.NotFoundException;
+import br.edu.utfpr.todoapi.model.Atuador;
 import br.edu.utfpr.todoapi.model.Dispositivo;
+import br.edu.utfpr.todoapi.model.Sensor;
 import br.edu.utfpr.todoapi.service.DispositivoService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/dispositivo")
+@Tag(name = "Dispositivo", description = "Endpoint para operações relacionadas a dispositivos")
 public class DispositivoController {
     @Autowired
     private DispositivoService dispositivoService;
 
     @PostMapping
+    @Operation(summary = "Criar um novo dispositivo", description = "Registra um novo objeto de dispositivo com base no DTO recebido.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "201", description = "Sucesso, retorna o dispositivo", content = @Content(schema = @Schema(implementation = Dispositivo.class))),
+        @ApiResponse(responseCode = "404", description = "Não encontrado, nenhum dispositivo com o ID fornecido")
+    })
     public ResponseEntity<Object> create(@RequestBody DispositivoDTO dto) {
         try {
             var res = dispositivoService.create(dto);
@@ -44,6 +59,7 @@ public class DispositivoController {
      * Obter todas as dispositivos do DB.
      */
     @GetMapping
+    @Operation(summary = "Obter todos os dispositivos")
     public List<Dispositivo> getAll() {
         return dispositivoService.getAll();
     }
@@ -52,33 +68,54 @@ public class DispositivoController {
      * Obter 1 dispositivo pelo ID.
      */
     @GetMapping("/{id}")
+    @Operation(summary = "Obter um dispositivo pelo ID")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Sucesso, retorna o dispositivo", content = @Content(schema = @Schema(implementation = Dispositivo.class))),
+        @ApiResponse(responseCode = "404", description = "Não encontrado, nenhum dispositivo com o ID fornecido")
+    })
     public ResponseEntity<Object> getById(@PathVariable("id") long id) {
-        var gate = dispositivoService.getById(id);
+        var dispositivo = dispositivoService.getById(id);
         
-        return gate.isPresent()
-            ? ResponseEntity.ok().body(gate.get())
+        return dispositivo.isPresent()
+            ? ResponseEntity.ok().body(dispositivo.get())
             : ResponseEntity.notFound().build();
     }
     
     @GetMapping("/{id}/atuadores")
+    @Operation(summary = "Obter atuadores por ID do dispositivo")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Sucesso, retorna os atuadores do dispositivo", content = @Content(array = @ArraySchema(schema = @Schema(implementation = Atuador.class)))),
+        @ApiResponse(responseCode = "404", description = "Não encontrado, nenhum dispositivo com o ID fornecido")
+    })
     public ResponseEntity<Object> getActuatorsByDeviceId(@PathVariable("id") long id) {
-        var gate = dispositivoService.getById(id);
+        var dispositivo = dispositivoService.getById(id);
         
-        return gate.isPresent()
-            ? ResponseEntity.ok().body(gate.get().getAtuadores())
+        return dispositivo.isPresent()
+            ? ResponseEntity.ok().body(dispositivo.get().getAtuadores())
             : ResponseEntity.notFound().build();
     }
 
     @GetMapping("/{id}/sensores")
+    @Operation(summary = "Obter sensores por ID do dispositivo")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Sucesso, retorna os sensores do dispositivo", content = @Content(array = @ArraySchema(schema = @Schema(implementation = Sensor.class)))),
+        @ApiResponse(responseCode = "404", description = "Não encontrado, nenhum sensor com o ID fornecido")
+    })
     public ResponseEntity<Object> getSensorsByDeviceId(@PathVariable("id") long id) {
-        var gate = dispositivoService.getById(id);
+        var dispositivo = dispositivoService.getById(id);
         
-        return gate.isPresent()
-            ? ResponseEntity.ok().body(gate.get().getSensores())
+        return dispositivo.isPresent()
+            ? ResponseEntity.ok().body(dispositivo.get().getSensores())
             : ResponseEntity.notFound().build();
     }
 
     @PutMapping("/{id}")
+    @Operation(summary = "Atualiza um dispositivo com base no seu ID.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Sucesso, retorna o dispositivo atualizado", content = @Content(schema = @Schema(implementation = Dispositivo.class))),
+        @ApiResponse(responseCode = "404", description = "Não encontrado, nenhum dispositivo com o ID fornecido"),
+        @ApiResponse(responseCode = "400", description = "ERRO, ocorreu algum erro na requisição")
+    })
     public ResponseEntity<Object> update(@PathVariable long id,
         @RequestBody DispositivoDTO dto) {
             try {
@@ -91,6 +128,12 @@ public class DispositivoController {
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Deleta um dispositivo com base no seu ID.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Sucesso, dispositivo deletado"),
+        @ApiResponse(responseCode = "404", description = "Não encontrado, nenhum dispositivo com o ID fornecido"),
+        @ApiResponse(responseCode = "400", description = "ERRO, ocorreu algum erro na requisição")
+    })
     public ResponseEntity<Object> delete(@PathVariable("id") long id){
         try {
             dispositivoService.delete(id);

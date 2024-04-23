@@ -1,5 +1,6 @@
 package br.edu.utfpr.todoapi.model;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -31,6 +32,12 @@ public class Gateway {
 
     @Column(nullable = false, unique = true)
     private String endereco;
+
+    @Column(nullable = false)
+    private LocalDateTime created_at;
+
+    @Column(nullable = false)
+    private LocalDateTime updated_at;
 
     @OneToMany(mappedBy = "gateway", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JsonIgnore

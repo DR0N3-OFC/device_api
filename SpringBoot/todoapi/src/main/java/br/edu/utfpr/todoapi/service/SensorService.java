@@ -1,5 +1,6 @@
 package br.edu.utfpr.todoapi.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,6 +27,9 @@ public class SensorService {
      */
     public Sensor create(SensorDTO dto){
         var sensor = new Sensor();
+        sensor.setCreated_at(LocalDateTime.now());
+        sensor.setUpdated_at(LocalDateTime.now());
+
         BeanUtils.copyProperties(dto, sensor);
 
         // Persistir no Banco de dados
@@ -61,6 +65,7 @@ public class SensorService {
         sensor.setNome(dto.nome());
         sensor.setTipo(dto.tipo());
         sensor.setDispositivo(dto.dispositivo());
+        sensor.setUpdated_at(LocalDateTime.now());
 
         return sensorRepository.save(sensor);
     }

@@ -1,5 +1,6 @@
 package br.edu.utfpr.todoapi.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,6 +27,8 @@ public class DispositivoService {
         var dispositivo = new Dispositivo();
         BeanUtils.copyProperties(dto, dispositivo);
 
+        dispositivo.setCreated_at(LocalDateTime.now());
+        dispositivo.setUpdated_at(LocalDateTime.now());
         // Persistir no Banco de dados
         return dispositivoRepository.save(dispositivo);
     }
@@ -60,6 +63,7 @@ public class DispositivoService {
         dispositivo.setDescricao(dto.descricao());
         dispositivo.setLocalizacao(dto.localizacao());
         dispositivo.setEndereco(dto.endereco());
+        dispositivo.setUpdated_at(LocalDateTime.now());
 
         return dispositivoRepository.save(dispositivo);
     }

@@ -1,5 +1,6 @@
 package br.edu.utfpr.todoapi.model;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -37,6 +38,11 @@ public class Dispositivo {
     @Column(nullable = false, unique = true)
     private String endereco;
 
+    @Column(nullable = false)
+    private LocalDateTime created_at;
+
+    @Column(nullable = false)
+    private LocalDateTime updated_at;
     @ManyToOne
     @JoinColumn(name = "gateway_id")
     @JsonIgnore

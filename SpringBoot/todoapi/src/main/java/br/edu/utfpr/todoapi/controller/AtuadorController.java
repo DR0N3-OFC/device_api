@@ -18,14 +18,26 @@ import br.edu.utfpr.todoapi.dto.AtuadorDTO;
 import br.edu.utfpr.todoapi.exception.NotFoundException;
 import br.edu.utfpr.todoapi.model.Atuador;
 import br.edu.utfpr.todoapi.service.AtuadorService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/atuador")
+@Tag(name = "Atuador", description = "Endpoint para operações relacionadas a atuadores")
 public class AtuadorController {
     @Autowired
     private AtuadorService atuadorService;
 
     @PostMapping
+    @Operation(summary = "Criar um novo atuador", description = "Registra um novo objeto de atuador com base no DTO recebido.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "201", description = "Sucesso, retorna o atuador", content = @Content(schema = @Schema(implementation = Atuador.class))),
+        @ApiResponse(responseCode = "404", description = "Não encontrado, nenhum atuador com o ID fornecido")
+    })
     public ResponseEntity<Object> create(@RequestBody AtuadorDTO dto) {
         try {
             var res = atuadorService.create(dto);
@@ -41,9 +53,10 @@ public class AtuadorController {
     }
 
     /**
-     * Obter todas as atuadors do DB.
+     * Obter todas as atuadores do DB.
      */
     @GetMapping
+    @Operation(summary = "Obter todos os atuadores")
     public List<Atuador> getAll() {
         return atuadorService.getAll();
     }
@@ -52,16 +65,27 @@ public class AtuadorController {
      * Obter 1 atuador pelo ID.
      */
     @GetMapping("/{id}")
+    @Operation(summary = "Obter um atuador pelo ID")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Sucesso, retorna o atuador", content = @Content(schema = @Schema(implementation = Atuador.class))),
+        @ApiResponse(responseCode = "404", description = "Não encontrado, nenhum atuador com o ID fornecido")
+    })
     public ResponseEntity<Object> getById(@PathVariable("id") long id) {
-        var gate = atuadorService.getById(id);
+        var atuador = atuadorService.getById(id);
         
-        return gate.isPresent()
-            ? ResponseEntity.ok().body(gate.get())
+        return atuador.isPresent()
+            ? ResponseEntity.ok().body(atuador.get())
             : ResponseEntity.notFound().build();
     }
     
 
     @PutMapping("/{id}")
+    @Operation(summary = "Atualiza um atuador com base no seu ID.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Sucesso, retorna o atuador atualizado", content = @Content(schema = @Schema(implementation = Atuador.class))),
+        @ApiResponse(responseCode = "404", description = "Não encontrado, nenhum atuador com o ID fornecido"),
+        @ApiResponse(responseCode = "400", description = "ERRO, ocorreu algum erro na requisição")
+    })
     public ResponseEntity<Object> update(@PathVariable long id,
         @RequestBody AtuadorDTO dto) {
             try {
@@ -74,6 +98,12 @@ public class AtuadorController {
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Deleta um atuador com base no seu ID.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Sucesso, atuador deletado"),
+        @ApiResponse(responseCode = "404", description = "Não encontrado, nenhum atuador com o ID fornecido"),
+        @ApiResponse(responseCode = "400", description = "ERRO, ocorreu algum erro na requisição")
+    })
     public ResponseEntity<Object> delete(@PathVariable("id") long id){
         try {
             atuadorService.delete(id);

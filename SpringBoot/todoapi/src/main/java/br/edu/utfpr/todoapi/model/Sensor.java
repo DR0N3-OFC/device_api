@@ -1,5 +1,6 @@
 package br.edu.utfpr.todoapi.model;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -30,6 +31,12 @@ public class Sensor {
 
     @Column(nullable = false)
     private String tipo;
+
+    @Column(nullable = false)
+    private LocalDateTime created_at;
+
+    @Column(nullable = false)
+    private LocalDateTime updated_at;
 
     @ManyToOne
     @JoinColumn(name = "dispositivo_id")

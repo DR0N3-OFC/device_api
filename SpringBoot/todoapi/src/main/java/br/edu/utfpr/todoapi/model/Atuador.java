@@ -1,5 +1,7 @@
 package br.edu.utfpr.todoapi.model;
 
+import java.time.LocalDateTime;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
@@ -22,6 +24,12 @@ public class Atuador {
     
     @Column(nullable = false, unique = true)
     private String nome;
+
+    @Column(nullable = false)
+    private LocalDateTime created_at;
+
+    @Column(nullable = false)
+    private LocalDateTime updated_at;
 
     @ManyToOne
     @JoinColumn(name = "dispositivo_id")

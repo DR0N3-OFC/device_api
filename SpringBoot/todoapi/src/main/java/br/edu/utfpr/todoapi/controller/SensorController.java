@@ -16,16 +16,30 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.edu.utfpr.todoapi.dto.SensorDTO;
 import br.edu.utfpr.todoapi.exception.NotFoundException;
+import br.edu.utfpr.todoapi.model.Medicao;
 import br.edu.utfpr.todoapi.model.Sensor;
 import br.edu.utfpr.todoapi.service.SensorService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/sensor")
+@Tag(name = "Sensor", description = "Endpoint para operações relacionadas a sensores")
 public class SensorController {
     @Autowired
     private SensorService sensorService;
 
     @PostMapping
+    @Operation(summary = "Criar um novo sensor", description = "Registra um novo objeto de sensor com base no DTO recebido.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "201", description = "Sucesso, retorna o sensor", content = @Content(schema = @Schema(implementation = Sensor.class))),
+        @ApiResponse(responseCode = "404", description = "Não encontrado, nenhum sensor com o ID fornecido")
+    })
     public ResponseEntity<Object> create(@RequestBody SensorDTO dto) {
         try {
             var res = sensorService.create(dto);
@@ -44,6 +58,7 @@ public class SensorController {
      * Obter todas as sensors do DB.
      */
     @GetMapping
+    @Operation(summary = "Obter todos os sensores")
     public List<Sensor> getAll() {
         return sensorService.getAll();
     }
@@ -52,24 +67,40 @@ public class SensorController {
      * Obter 1 sensor pelo ID.
      */
     @GetMapping("/{id}")
+    @Operation(summary = "Obter um sensor pelo ID")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Sucesso, retorna o sensor", content = @Content(schema = @Schema(implementation = Sensor.class))),
+        @ApiResponse(responseCode = "404", description = "Não encontrado, nenhum sensor com o ID fornecido")
+    })
     public ResponseEntity<Object> getById(@PathVariable("id") long id) {
-        var gate = sensorService.getById(id);
+        var sensor = sensorService.getById(id);
         
-        return gate.isPresent()
-            ? ResponseEntity.ok().body(gate.get())
+        return sensor.isPresent()
+            ? ResponseEntity.ok().body(sensor.get())
             : ResponseEntity.notFound().build();
     }
     
     @GetMapping("/{id}/medicoes")
+    @Operation(summary = "Obter medicoes por ID do gateway")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Sucesso, retorna os medicoes do gateway", content = @Content(array = @ArraySchema(schema = @Schema(implementation = Medicao.class)))),
+        @ApiResponse(responseCode = "404", description = "Não encontrado, nenhuma medicao com o ID fornecido")
+    })
     public ResponseEntity<Object> getMeasurementsBySensorId(@PathVariable("id") long id) {
-        var gate = sensorService.getById(id);
+        var sensor = sensorService.getById(id);
         
-        return gate.isPresent()
-            ? ResponseEntity.ok().body(gate.get().getMedicoes())
+        return sensor.isPresent()
+            ? ResponseEntity.ok().body(sensor.get().getMedicoes())
             : ResponseEntity.notFound().build();
     }
 
     @PutMapping("/{id}")
+    @Operation(summary = "Atualiza um sensor com base no seu ID.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Sucesso, retorna o sensor atualizado", content = @Content(schema = @Schema(implementation = Sensor.class))),
+        @ApiResponse(responseCode = "404", description = "Não encontrado, nenhum sensor com o ID fornecido"),
+        @ApiResponse(responseCode = "400", description = "ERRO, ocorreu algum erro na requisição")
+    })
     public ResponseEntity<Object> update(@PathVariable long id,
         @RequestBody SensorDTO dto) {
             try {
@@ -82,6 +113,12 @@ public class SensorController {
     }
 
     @DeleteMapping("/{id}")
+    @Operation(summary = "Deleta um sensor com base no seu ID.")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Sucesso, sensor deletado"),
+        @ApiResponse(responseCode = "404", description = "Não encontrado, nenhum sensor com o ID fornecido"),
+        @ApiResponse(responseCode = "400", description = "ERRO, ocorreu algum erro na requisição")
+    })
     public ResponseEntity<Object> delete(@PathVariable("id") long id){
         try {
             sensorService.delete(id);

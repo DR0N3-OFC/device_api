@@ -1,5 +1,6 @@
 package br.edu.utfpr.todoapi.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,6 +29,8 @@ public class GatewayService {
         var gateway = new Gateway();
         BeanUtils.copyProperties(dto, gateway);
 
+        gateway.setCreated_at(LocalDateTime.now());
+        gateway.setUpdated_at(LocalDateTime.now());
         // Persistir no Banco de dados
         return gatewayRepository.save(gateway);
     }
@@ -61,6 +64,7 @@ public class GatewayService {
         gateway.setNome(dto.nome());
         gateway.setDescricao(dto.descricao());
         gateway.setEndereco(dto.endereco());
+        gateway.setUpdated_at(LocalDateTime.now());
 
         return gatewayRepository.save(gateway);
     }
