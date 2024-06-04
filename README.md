@@ -1,5 +1,9 @@
 # Device API (CC58D-1-2024)
 
+> Desenvolvido pelos alunos: Bruno Raphael Facundo e Matheus Brustolin
+
+---
+
 API desenvolvida como requisito de nota na disciplina de Tópicos Avançados em Computação da Universidade Tecnológica Federal do Paraná.
 Consiste em uma API para registro de dispositivos, gateways, sensores, atuadores, etc. Possuindo relacionamento entre si.
 

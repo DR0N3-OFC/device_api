@@ -88,7 +88,7 @@ public class PessoaController {
         @ApiResponse(responseCode = "200", description = "Sucesso, retorna os gateways da pessoa", content = @Content(array = @ArraySchema(schema = @Schema(implementation = Gateway.class)))),
         @ApiResponse(responseCode = "404", description = "Não encontrado, nenhum gateway com o ID fornecido")
     })
-    public ResponseEntity<Object> getMeasurementsBySensorId(@PathVariable("id") long id) {
+    public ResponseEntity<Object> getGatewaysByPersonId(@PathVariable("id") long id) {
         var pessoa = pessoaService.getById(id);
         
         return pessoa.isPresent()
