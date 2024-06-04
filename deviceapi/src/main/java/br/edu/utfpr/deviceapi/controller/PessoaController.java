@@ -26,6 +26,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 
 
 @RestController
@@ -41,7 +42,7 @@ public class PessoaController {
         @ApiResponse(responseCode = "201", description = "Sucesso, retorna a pessoa", content = @Content(schema = @Schema(implementation = Pessoa.class))),
         @ApiResponse(responseCode = "404", description = "Não encontrado, nenhuma pessoa com o ID fornecido")
     })
-    public ResponseEntity<Object> create(@RequestBody PessoaDTO dto) {
+    public ResponseEntity<Object> create(@Valid @RequestBody PessoaDTO dto) {
         try {
             var res = pessoaService.create(dto);
 

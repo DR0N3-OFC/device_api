@@ -65,6 +65,10 @@ public class PessoaService {
         return pessoaRepository.save(pessoa);
     }
 
+    public Optional<Pessoa> findByEmail(String email) {
+        return pessoaRepository.findByEmail(email);
+    }
+
     public void delete(long id) throws NotFoundException {
         var res = pessoaRepository.findById(id);
 

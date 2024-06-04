@@ -27,6 +27,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/dispositivo")
@@ -41,7 +42,7 @@ public class DispositivoController {
         @ApiResponse(responseCode = "201", description = "Sucesso, retorna o dispositivo", content = @Content(schema = @Schema(implementation = Dispositivo.class))),
         @ApiResponse(responseCode = "404", description = "Não encontrado, nenhum dispositivo com o ID fornecido")
     })
-    public ResponseEntity<Object> create(@RequestBody DispositivoDTO dto) {
+    public ResponseEntity<Object> create(@Valid @RequestBody DispositivoDTO dto) {
         try {
             var res = dispositivoService.create(dto);
 

@@ -24,6 +24,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/atuador")
@@ -38,7 +39,7 @@ public class AtuadorController {
         @ApiResponse(responseCode = "201", description = "Sucesso, retorna o atuador", content = @Content(schema = @Schema(implementation = Atuador.class))),
         @ApiResponse(responseCode = "404", description = "Não encontrado, nenhum atuador com o ID fornecido")
     })
-    public ResponseEntity<Object> create(@RequestBody AtuadorDTO dto) {
+    public ResponseEntity<Object> create(@Valid @RequestBody AtuadorDTO dto) {
         try {
             var res = atuadorService.create(dto);
 

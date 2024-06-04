@@ -26,6 +26,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/gateway")
@@ -40,7 +41,7 @@ public class GatewayController {
         @ApiResponse(responseCode = "201", description = "Sucesso, retorna o gateway", content = @Content(schema = @Schema(implementation = Gateway.class))),
         @ApiResponse(responseCode = "404", description = "Não encontrado, nenhum gateway com o ID fornecido")
     })
-    public ResponseEntity<Object> create(@RequestBody GatewayDTO dto) {
+    public ResponseEntity<Object> create(@Valid @RequestBody GatewayDTO dto) {
         try {
             var res = gatewayService.create(dto);
 

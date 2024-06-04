@@ -24,6 +24,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/medicao")
@@ -38,7 +39,7 @@ public class MedicaoController {
         @ApiResponse(responseCode = "201", description = "Sucesso, retorna o medicao", content = @Content(schema = @Schema(implementation = Medicao.class))),
         @ApiResponse(responseCode = "404", description = "Não encontrado, nenhum medicao com o ID fornecido")
     })
-    public ResponseEntity<Object> create(@RequestBody MedicaoDTO dto) {
+    public ResponseEntity<Object> create(@Valid @RequestBody MedicaoDTO dto) {
         try {
             var res = medicaoService.create(dto);
 

@@ -26,6 +26,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/sensor")
@@ -40,7 +41,7 @@ public class SensorController {
         @ApiResponse(responseCode = "201", description = "Sucesso, retorna o sensor", content = @Content(schema = @Schema(implementation = Sensor.class))),
         @ApiResponse(responseCode = "404", description = "Não encontrado, nenhum sensor com o ID fornecido")
     })
-    public ResponseEntity<Object> create(@RequestBody SensorDTO dto) {
+    public ResponseEntity<Object> create(@Valid @RequestBody SensorDTO dto) {
         try {
             var res = sensorService.create(dto);
 
