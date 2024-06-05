@@ -64,6 +64,7 @@ public class DispositivoService {
         dispositivo.setLocalizacao(dto.localizacao());
         dispositivo.setEndereco(dto.endereco());
         dispositivo.setUpdated_at(LocalDateTime.now());
+        dispositivo.setGateway(dto.gateway());
 
         return dispositivoRepository.save(dispositivo);
     }

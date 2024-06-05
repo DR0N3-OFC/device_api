@@ -43,9 +43,9 @@ public class Dispositivo {
 
     @Column(nullable = false)
     private LocalDateTime updated_at;
+    
     @ManyToOne
     @JoinColumn(name = "gateway_id")
-    @JsonIgnore
     private Gateway gateway;
 
     @OneToMany(mappedBy = "dispositivo", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)

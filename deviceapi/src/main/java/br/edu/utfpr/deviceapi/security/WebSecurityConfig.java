@@ -1,5 +1,7 @@
 package br.edu.utfpr.deviceapi.security;
 
+import static org.springframework.security.config.Customizer.withDefaults;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -17,8 +19,6 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
 import jakarta.servlet.http.HttpServletResponse;
-
-import static org.springframework.security.config.Customizer.withDefaults;
 import lombok.RequiredArgsConstructor;
 
 @Configuration

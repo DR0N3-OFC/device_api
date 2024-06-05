@@ -46,7 +46,7 @@ public class Gateway {
     @JsonIgnore
     private Pessoa pessoa;
 
-    @OneToMany(mappedBy = "gateway", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "gateway", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.EAGER)
     @JsonIgnore
     private List<Dispositivo> dispositivos;
 }
