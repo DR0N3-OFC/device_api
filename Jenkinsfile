@@ -41,7 +41,7 @@ pipeline {
         script {
           def postgresContainerName = 'postgres'
           def postgresImageName = 'postgres:latest'
-          def postgresVolume = '/path/to/host/volume:/var/lib/postgresql/data'
+          def postgresVolume = 'devices-volume'
           
           // Check if the PostgreSQL container exists
           sh """
@@ -53,7 +53,7 @@ pipeline {
               -e POSTGRES_USER=postgres \
               -e POSTGRES_DB=device_api \
               -p 5432:5432 \
-              -v ${postgresVolume} \
+              -v -v ${postgresVolumeName}:/var/lib/postgresql/data \
               ${postgresImageName}
           else
               echo "PostgreSQL container '${postgresContainerName}' already exists."
