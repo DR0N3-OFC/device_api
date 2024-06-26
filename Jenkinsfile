@@ -12,25 +12,28 @@ pipeline {
     }
     stage('Prune Docker data') {
       steps {
-        // Check if the container exists
-        sh """
-          if [ \$(docker ps -a -q -f name='spring') ]; then
-              echo "Removing container 'spring'..."
-              docker rm -f 'spring'
+        def containerName = 'spring'
+          def imageName = 'spring:latest'
+
+          // Check if the container exists
+          sh """
+          if [ \$(docker ps -a -q -f name=${containerName}) ]; then
+              echo "Removing container '${containerName}'..."
+              docker rm -f ${containerName}
           else
-              echo "Container 'spring' does not exist."
+              echo "Container '${containerName}' does not exist."
           fi
           """
   
           // Check if the image exists
           sh """
-          if [ \$(docker images -q 'spring:latest') ]; then
-              echo "Removing image 'spring:latest'..."
-              docker rmi -f 'spring:latest'
+          if [ \$(docker images -q ${imageName}) ]; then
+              echo "Removing image '${imageName}'..."
+              docker rmi -f ${imageName}
           else
-              echo "Image 'spring:latest' does not exist."
+              echo "Image '${imageName}' does not exist."
           fi
-        """
+          """
       }
     }
     stage('Start PostgreSQL container if not exists') {
