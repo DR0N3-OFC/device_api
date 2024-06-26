@@ -33,6 +33,32 @@ pipeline {
         """
       }
     }
+    stage('Start PostgreSQL container if not exists') {
+      steps {
+        script {
+          def postgresContainerName = 'postgres'
+          def postgresImageName = 'postgres:latest'
+          def postgresVolume = '/path/to/host/volume:/var/lib/postgresql/data'
+          
+          // Check if the PostgreSQL container exists
+          sh """
+          if [ ! \$(docker ps -a -q -f name=${postgresContainerName}) ]; then
+              echo "Starting new PostgreSQL container '${postgresContainerName}'..."
+              docker run -d \
+              --name ${postgresContainerName} \
+              -e POSTGRES_PASSWORD=postgres \
+              -e POSTGRES_USER=postgres \
+              -e POSTGRES_DB=device_api \
+              -p 5432:5432 \
+              -v ${postgresVolume} \
+              ${postgresImageName}
+          else
+              echo "PostgreSQL container '${postgresContainerName}' already exists."
+          fi
+          """
+        }
+      }
+    }
     stage('Start container') {
       steps {
         sh '''
