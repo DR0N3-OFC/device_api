@@ -18,6 +18,7 @@ import br.edu.utfpr.deviceapi.dto.GatewayDTO;
 import br.edu.utfpr.deviceapi.exception.NotFoundException;
 import br.edu.utfpr.deviceapi.model.Dispositivo;
 import br.edu.utfpr.deviceapi.model.Gateway;
+import br.edu.utfpr.deviceapi.producer.DeviceProducer;
 import br.edu.utfpr.deviceapi.service.GatewayService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -34,6 +35,7 @@ import jakarta.validation.Valid;
 public class GatewayController {
     @Autowired
     private GatewayService gatewayService;
+    @Autowired private DeviceProducer producer;
 
     @PostMapping
     @Operation(summary = "Criar um novo gateway", description = "Registra um novo objeto de gateway com base no DTO recebido.")
@@ -44,13 +46,14 @@ public class GatewayController {
     public ResponseEntity<Object> create(@Valid @RequestBody GatewayDTO dto) {
         try {
             var res = gatewayService.create(dto);
-
+            producer.sendMessage(String.format("Gateway criado: %s (%s)", dto.nome(), dto.endereco()));
             // Seta o status para 201 (CREATED) e devolve
             // o objeto gateway em JSON.
             return ResponseEntity.status(HttpStatus.CREATED).body(res);
         } catch(Exception ex) {
             // Seta o status para 400 (Bad request) e devolve
             // a mensagem da exceção lançada.
+            producer.sendMessage(String.format("Erro ao criar gateway: %s", ex.getMessage()));
             return ResponseEntity.badRequest().body(ex.getMessage());
         }
     }
@@ -105,10 +108,14 @@ public class GatewayController {
     public ResponseEntity<Object> update(@PathVariable long id,
         @RequestBody GatewayDTO dto) {
             try {
-                return ResponseEntity.ok().body(gatewayService.update(id, dto));
+                var gateway = gatewayService.update(id, dto);
+
+                producer.sendMessage(String.format("Gateway com ID %d atualizado: %s (%s)", id, dto.nome(), dto.endereco()));
+                return ResponseEntity.ok().body(gateway);
             } catch(NotFoundException ex) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
             } catch(Exception ex) {
+                producer.sendMessage(String.format("Erro ao atualizar gateway: %s", ex.getMessage()));
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
             }
     }
@@ -123,10 +130,13 @@ public class GatewayController {
     public ResponseEntity<Object> delete(@PathVariable("id") long id){
         try {
             gatewayService.delete(id);
+
+            producer.sendMessage(String.format("Gateway com ID %d removido.", id));
             return ResponseEntity.ok().build();
         } catch(NotFoundException ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
         } catch(Exception ex) {
+            producer.sendMessage(String.format("Erro ao remover gateway com ID %d.", id));
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
         }
     }

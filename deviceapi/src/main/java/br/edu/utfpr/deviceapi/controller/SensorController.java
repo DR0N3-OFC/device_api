@@ -18,6 +18,7 @@ import br.edu.utfpr.deviceapi.dto.SensorDTO;
 import br.edu.utfpr.deviceapi.exception.NotFoundException;
 import br.edu.utfpr.deviceapi.model.Medicao;
 import br.edu.utfpr.deviceapi.model.Sensor;
+import br.edu.utfpr.deviceapi.producer.DeviceProducer;
 import br.edu.utfpr.deviceapi.service.SensorService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
@@ -32,8 +33,8 @@ import jakarta.validation.Valid;
 @RequestMapping("/sensor")
 @Tag(name = "Sensor", description = "Endpoint para operações relacionadas a sensores")
 public class SensorController {
-    @Autowired
-    private SensorService sensorService;
+    @Autowired private SensorService sensorService;
+    @Autowired private DeviceProducer producer;
 
     @PostMapping
     @Operation(summary = "Criar um novo sensor", description = "Registra um novo objeto de sensor com base no DTO recebido.")
@@ -47,10 +48,13 @@ public class SensorController {
 
             // Seta o status para 201 (CREATED) e devolve
             // o objeto sensor em JSON.
+            producer.sendMessage(String.format("Sensor criado: %s", dto.nome()));
+
             return ResponseEntity.status(HttpStatus.CREATED).body(res);
         } catch(Exception ex) {
             // Seta o status para 400 (Bad request) e devolve
             // a mensagem da exceção lançada.
+            producer.sendMessage(String.format("Erro ao criar sensor: %s", ex.getMessage()));
             return ResponseEntity.badRequest().body(ex.getMessage());
         }
     }
@@ -105,10 +109,14 @@ public class SensorController {
     public ResponseEntity<Object> update(@PathVariable long id,
         @RequestBody SensorDTO dto) {
             try {
-                return ResponseEntity.ok().body(sensorService.update(id, dto));
+                var sensor = sensorService.update(id, dto);
+
+                producer.sendMessage(String.format("Sensor com ID %d atualizado: %s", id, dto.nome()));
+                return ResponseEntity.ok().body(sensor);
             } catch(NotFoundException ex) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
             } catch(Exception ex) {
+                producer.sendMessage(String.format("Erro ao atualizar sensor: %s", ex.getMessage()));
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
             }
     }
@@ -123,10 +131,13 @@ public class SensorController {
     public ResponseEntity<Object> delete(@PathVariable("id") long id){
         try {
             sensorService.delete(id);
+
+            producer.sendMessage(String.format("Sensor com ID %d removido.", id));
             return ResponseEntity.ok().build();
         } catch(NotFoundException ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
         } catch(Exception ex) {
+            producer.sendMessage(String.format("Erro ao remover sensor com ID %d.", id));
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
         }
     }

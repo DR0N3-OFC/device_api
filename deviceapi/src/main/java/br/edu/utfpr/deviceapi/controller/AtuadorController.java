@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import br.edu.utfpr.deviceapi.dto.AtuadorDTO;
 import br.edu.utfpr.deviceapi.exception.NotFoundException;
 import br.edu.utfpr.deviceapi.model.Atuador;
+import br.edu.utfpr.deviceapi.producer.DeviceProducer;
 import br.edu.utfpr.deviceapi.service.AtuadorService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -30,8 +31,8 @@ import jakarta.validation.Valid;
 @RequestMapping("/atuador")
 @Tag(name = "Atuador", description = "Endpoint para operações relacionadas a atuadores")
 public class AtuadorController {
-    @Autowired
-    private AtuadorService atuadorService;
+    @Autowired private AtuadorService atuadorService;
+    @Autowired private DeviceProducer producer;
 
     @PostMapping
     @Operation(summary = "Criar um novo atuador", description = "Registra um novo objeto de atuador com base no DTO recebido.")
@@ -42,13 +43,15 @@ public class AtuadorController {
     public ResponseEntity<Object> create(@Valid @RequestBody AtuadorDTO dto) {
         try {
             var res = atuadorService.create(dto);
-
             // Seta o status para 201 (CREATED) e devolve
             // o objeto atuador em JSON.
+            producer.sendMessage(String.format("Atuador criado: %s", dto.nome()));
+
             return ResponseEntity.status(HttpStatus.CREATED).body(res);
         } catch(Exception ex) {
             // Seta o status para 400 (Bad request) e devolve
             // a mensagem da exceção lançada.
+            producer.sendMessage(String.format("Erro ao criar atuador: %s", ex.getMessage()));
             return ResponseEntity.badRequest().body(ex.getMessage());
         }
     }
@@ -90,10 +93,14 @@ public class AtuadorController {
     public ResponseEntity<Object> update(@PathVariable long id,
         @RequestBody AtuadorDTO dto) {
             try {
-                return ResponseEntity.ok().body(atuadorService.update(id, dto));
+                var atuador = atuadorService.update(id, dto);
+
+                producer.sendMessage(String.format("Atuador com ID %d atualizado: %s", id, dto.nome()));
+                return ResponseEntity.ok().body(atuador);
             } catch(NotFoundException ex) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
             } catch(Exception ex) {
+                producer.sendMessage(String.format("Erro ao atualizar atuador: %s", ex.getMessage()));
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
             }
     }
@@ -108,10 +115,13 @@ public class AtuadorController {
     public ResponseEntity<Object> delete(@PathVariable("id") long id){
         try {
             atuadorService.delete(id);
+
+            producer.sendMessage(String.format("Atuador com ID %d removido.", id));
             return ResponseEntity.ok().build();
         } catch(NotFoundException ex) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
         } catch(Exception ex) {
+            producer.sendMessage(String.format("Erro ao remover atuador com ID %d.", id));
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
         }
     }
